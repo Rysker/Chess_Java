@@ -1,0 +1,50 @@
+package Mouse;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class Mouse extends MouseAdapter
+{
+    public int x;
+    public int y;
+    public boolean enable = true;
+    public boolean pressed = false;
+
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+        this.pressed = true;
+        System.out.println("SADGE");
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+        this.pressed = false;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e)
+    {
+        this.x = e.getX();
+        this.y = e.getY();
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {
+        this.x = e.getX();
+        this.y = e.getY();
+    }
+
+    public void enable()
+    {
+        this.enable = true;
+    }
+
+    public void disable()
+    {
+        this.enable = false;
+    }
+
+}
