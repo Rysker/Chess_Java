@@ -4,45 +4,31 @@ import DataTypes.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import Board.*;
 
 import MoveStrategy.*;
 
 import javax.imageio.ImageIO;
 
-public abstract class Piece {
+public abstract class Piece implements Cloneable
+{
     private BufferedImage image;
+    private int id;
     private PieceColor color;
     private PieceType type;
-    private int movesCount;
-    private List<Tuple<Integer, Integer>> moves;
-    private List<MoveStrategy> availableStrategies;
-    public List<Tuple<Integer, Integer>> getMoves() {
-        return moves;
-    }
-
-    public void setMoves(List<Tuple<Integer, Integer>> moves) {
-        this.moves = moves;
-    }
-
-    public int getMovesCount() {
-        return movesCount;
-    }
-
-    public void setMovesCount(int movesCount) {
-        this.movesCount = movesCount;
-    }
-
-    public Piece(PieceColor color, PieceType type)
+    private int lastMoveTurn = -1;
+    private ArrayList<Tuple<Integer, Integer>> moves;
+    private ArrayList<Tuple<Integer, Integer>> attackingMoves;
+    private ArrayList<MoveStrategy> availableStrategies;
+    public Piece(PieceColor color, PieceType type, int id)
     {
+        this.id = id;
         this.color = color;
         this.type = type;
         this.moves = new ArrayList<>();
-        this.movesCount = 0;
+        this.attackingMoves = new ArrayList<>();
         this.availableStrategies = new ArrayList<>();
         this.image = prepareImage();
     }
@@ -69,6 +55,12 @@ public abstract class Piece {
         this.moves.addAll(set);
     }
 
+    public void removeMove(Tuple<Integer, Integer> move)
+    {
+        this.moves.removeIf(x -> x.equals(move));
+        this.attackingMoves.removeIf(x -> x.equals(move));
+    }
+
     public void setColor(PieceColor color) {
         this.color = color;
     }
@@ -83,21 +75,27 @@ public abstract class Piece {
 
     public void getAttackingMoves(Board board)
     {
+        this.attackingMoves.clear();
         if (this instanceof Pawn)
         {
             ArrayList<Tuple<Integer, Integer>> tmp = ((Pawn) this).getAttackedBlocks(board);
+            attackingMoves.addAll(tmp);
             moves.addAll(tmp);
-            return;
         }
         for (MoveStrategy strategy : availableStrategies)
         {
             Tuple<Integer, Integer> coords = board.getTupleFromPiece(this);
             ArrayList<Tuple<Integer, Integer>> strategyMoves = strategy.firstMoveCheck(coords.getFirst(), coords.getSecond(), board);
-            moves.addAll(strategyMoves);
+            this.attackingMoves.addAll(strategyMoves);
         }
-        Set<Tuple<Integer, Integer>> set = new HashSet<>(this.moves);
+        Set<Tuple<Integer, Integer>> set = new HashSet<>(this.attackingMoves);
+        Set<Tuple<Integer, Integer>> set2 = new HashSet<>(this.moves);
+
+        this.attackingMoves.clear();
+        this.attackingMoves.addAll(set);
+
         this.moves.clear();
-        this.moves.addAll(set);
+        this.moves.addAll(set2);
     }
 
     public PieceColor getColor() {
@@ -140,4 +138,57 @@ public abstract class Piece {
         Tuple<Integer, Integer> coords = board.getTupleFromPiece(this);
         return coords;
     }
+
+    public ArrayList<Tuple<Integer, Integer>> getAttackingMoves()
+    {
+        return attackingMoves;
+    }
+
+    public ArrayList<Tuple<Integer, Integer>> getPossibleMoves()
+    {
+        return moves;
+    }
+
+    public void setMoves(ArrayList<Tuple<Integer, Integer>> moves)
+    {
+        this.moves = moves;
+    }
+
+    public int getLastMoveTurn()
+    {
+        return lastMoveTurn;
+    }
+
+    public void setLastMoveTurn(int lastMoveTurn)
+    {
+        this.lastMoveTurn = lastMoveTurn;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    @Override
+    public Piece clone()
+    {
+        try
+        {
+            Piece clone = (Piece) super.clone();
+            clone.moves = new ArrayList<>(this.moves);
+            clone.attackingMoves = new ArrayList<>(this.attackingMoves);
+            clone.availableStrategies = new ArrayList<>(this.availableStrategies);
+            clone.id = this.id;
+            clone.image = this.image;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError(e);
+        }
+    }
+
 }

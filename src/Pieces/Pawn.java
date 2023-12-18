@@ -8,11 +8,9 @@ import java.util.ArrayList;
 
 public class Pawn extends Piece
 {
-    private int doubleMoveTurn = -1;
-
-    public Pawn(PieceColor color, PieceType type)
+    public Pawn(PieceColor color, PieceType type, int id)
     {
-        super(color, type);
+        super(color, type, id);
         this.addMoveStrategy(new PawnMoveset());
     }
 

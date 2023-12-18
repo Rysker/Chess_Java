@@ -5,7 +5,7 @@ import Pieces.Piece;
 import java.awt.*;
 import java.util.Objects;
 
-public class Block
+public class Block implements Cloneable
 {
     private int row;
     private int col;
@@ -52,7 +52,7 @@ public class Block
 
     public static int getBoardIndexRowCol(int row, int col)
     {
-        return col * 1 + row * 8;
+        return col + row * 8;
     }
 
     @Override
@@ -68,5 +68,24 @@ public class Block
     public int hashCode()
     {
         return Objects.hash(row, col);
+    }
+
+    @Override
+    public Block clone()
+    {
+        try
+        {
+            Block clone = (Block) super.clone();
+            clone.color = new Color(this.color.getRGB());
+            if(this.piece != null)
+                clone.piece = piece.clone();
+            else
+                clone.piece = null;
+            return clone;
+        }
+        catch (CloneNotSupportedException e)
+        {
+            throw new InternalError(e);
+        }
     }
 }

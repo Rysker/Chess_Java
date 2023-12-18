@@ -7,6 +7,7 @@ public class LegendViewer
     public void drawLegend(Graphics2D g)
     {
         g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+        g.setColor(Color.WHITE);
         int i = 1;
         for (char letter = 'A'; letter <= 'H'; letter++)
         {

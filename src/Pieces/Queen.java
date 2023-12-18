@@ -9,9 +9,9 @@ import java.awt.image.BufferedImage;
 
 public class Queen extends Piece
 {
-    public Queen(PieceColor color, PieceType type)
+    public Queen(PieceColor color, PieceType type, int id)
     {
-        super(color, type);
+        super(color, type, id);
         this.addMoveStrategy(new DiagonalMoveset());
         this.addMoveStrategy(new OrthogonalMoveset());
     }

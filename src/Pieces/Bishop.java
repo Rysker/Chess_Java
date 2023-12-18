@@ -8,9 +8,9 @@ import java.awt.image.BufferedImage;
 
 public class Bishop extends Piece
 {
-    public Bishop(PieceColor color, PieceType type)
+    public Bishop(PieceColor color, PieceType type, int id)
     {
-        super(color, type);
+        super(color, type, id);
         this.addMoveStrategy(new DiagonalMoveset());
     }
 }

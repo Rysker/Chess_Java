@@ -22,10 +22,18 @@ public class PawnAttackMoveset extends MoveStrategy
             x = 1;
         ArrayList<Tuple<Integer, Integer>> tmp = new ArrayList<>();
         if(checkValidRange(coords.getFirst() + x, coords.getSecond() + x))
-            tmp.add(new Tuple<>(coords.getFirst() + x, coords.getSecond() + x));
+        {
+            Piece enemy = board.getPieceFromCoords(coords.getFirst() + x, coords.getSecond() + x);
+            if (enemy != null && !enemy.getColor().equals(color))
+                tmp.add(new Tuple<>(coords.getFirst() + x, coords.getSecond() + x));
+        }
 
         if(checkValidRange(coords.getFirst() + x, coords.getSecond() - x))
-            tmp.add(new Tuple<>(coords.getFirst() + x, coords.getSecond() - x));
+        {
+            Piece enemy = board.getPieceFromCoords(coords.getFirst() + x, coords.getSecond() - x);
+            if (enemy != null && !enemy.getColor().equals(color))
+                tmp.add(new Tuple<>(coords.getFirst() + x, coords.getSecond() - x));
+        }
         return tmp;
     }
 }

@@ -8,9 +8,9 @@ import java.awt.image.BufferedImage;
 
 public class Rook extends Piece
 {
-    public Rook(PieceColor color, PieceType type)
+    public Rook(PieceColor color, PieceType type, int id)
     {
-        super(color, type);
+        super(color, type, id);
         this.addMoveStrategy(new OrthogonalMoveset());
     }
 }

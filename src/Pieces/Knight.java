@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage;
 
 public class Knight extends Piece
 {
-    public Knight(PieceColor color, PieceType type)
+    public Knight(PieceColor color, PieceType type, int id)
     {
-        super(color, type);
+        super(color, type, id);
         this.addMoveStrategy(new KnightMoveset());
     }
 
