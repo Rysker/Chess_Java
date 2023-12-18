@@ -2,6 +2,7 @@ package Pieces;
 
 import DataTypes.PieceColor;
 import DataTypes.PieceType;
+import MoveStrategy.CastlingMoveset;
 import MoveStrategy.KingMoveset;
 
 import java.awt.image.BufferedImage;
@@ -12,5 +13,6 @@ public class King extends Piece
     {
         super(color, type, id);
         this.addMoveStrategy(new KingMoveset());
+        this.addMoveStrategy(new CastlingMoveset());
     }
 }

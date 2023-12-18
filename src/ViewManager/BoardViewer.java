@@ -14,6 +14,7 @@ import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseMotionList
 public class BoardViewer
 {
     private LegendViewer legend;
+    private PromotionMenu promotion;
     private Mouse mouse;
     private Board board;
     public final int piece_offset = 100;

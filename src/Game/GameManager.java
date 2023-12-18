@@ -13,6 +13,9 @@ import Mouse.*;
 import javax.swing.*;
 
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import static java.lang.System.exit;
 
 public class GameManager
 {
@@ -59,16 +62,21 @@ public class GameManager
     private void gameTurn()
     {
         logic.finalLogic(this.turn, this.board);
+        handleConditions();
         changeActivePlayer();
         while(last_move_turn != turn)
         {
             handleMoveFromPlayer();
         }
         turn ++;
+        board.setTurn(turn);
+        checkPromotion();
     }
 
     private void handleMoveFromPlayer()
     {
+        window.repaint();
+        uiManager.demandUpdate();
         //Human player
         ArrayList<Tuple<Integer, Integer>> moves = this.activePlayer.getAction();
         if(moves.size() == 1)
@@ -82,7 +90,7 @@ public class GameManager
             Tuple<Integer, Integer> moveFrom = moves.get(0);
             Tuple<Integer, Integer> moveTo = moves.get(1);
             Piece piece = board.getPieceFromCoords(moveFrom.getFirst(), moveFrom.getSecond());
-            if(new NormalMove().performMove(piece, moveTo, board))
+            if(new CastlingMove().performMove(turn, piece, moveTo, board))
             {
                 this.last_move_turn++;
             }
@@ -110,7 +118,7 @@ public class GameManager
 
             if(board.getActive_piece() != null)
             {
-                if(new NormalMove().performMove(board.getActive_piece(), new Tuple<>(row, col), board))
+                if(new CastlingMove().performMove(turn, board.getActive_piece(), new Tuple<>(row, col), board))
                 {
                     this.last_move_turn++;
                 }
@@ -132,4 +140,46 @@ public class GameManager
     {
         this.window = window;
     }
+
+    private void checkPromotion()
+    {
+        Piece piece = this.logic.checkPromotion(board);
+        if(this.logic.checkPromotion(board) != null)
+        {
+            String choice;
+            if(piece.getColor() == PieceColor.WHITE)
+                choice = this.uiManager.getPromotionChoice(PieceColor.WHITE);
+            else
+                choice = this.uiManager.getPromotionChoice(PieceColor.BLACK);
+
+            this.logic.performPromotion(piece, choice, board);
+        }
+    }
+
+    private void handleConditions()
+    {
+        int answer = logic.checkConditions(turn, board);
+        if(answer != 0)
+        {
+            if(answer == 1)
+            {
+                System.out.println("Black player won!");
+            }
+
+            if(answer == 2)
+            {
+                System.out.println("Draw");
+            }
+
+            if(answer == 3)
+            {
+                System.out.println("White player won!");
+            }
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Press any key to close the game");
+            scanner.nextLine();
+            exit(1);
+        }
+    }
+
 }

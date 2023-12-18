@@ -19,6 +19,16 @@ public abstract class Piece implements Cloneable
     private PieceColor color;
     private PieceType type;
     private int lastMoveTurn = -1;
+
+    public int getDouble_turn() {
+        return double_turn;
+    }
+
+    public void setDouble_turn(int double_turn) {
+        this.double_turn = double_turn;
+    }
+
+    private int double_turn = -1;
     private ArrayList<Tuple<Integer, Integer>> moves;
     private ArrayList<Tuple<Integer, Integer>> attackingMoves;
     private ArrayList<MoveStrategy> availableStrategies;
@@ -110,7 +120,8 @@ public abstract class Piece implements Cloneable
         return image;
     }
 
-    private BufferedImage prepareImage() {
+    private BufferedImage prepareImage()
+    {
         BufferedImage image = null;
         String path = "/assets/" + getColor().toString().toLowerCase() + "_" + getType().toString().toLowerCase() + ".png";
         try {

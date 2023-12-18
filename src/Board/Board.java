@@ -8,7 +8,6 @@ import Players.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Board implements Cloneable
 {
@@ -23,7 +22,16 @@ public class Board implements Cloneable
     private Piece active_piece = null;
     private Piece white_king = null;
     private Piece black_king = null;
+    private int turn;
     private int nextPieceID = 32;
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
 
     public Piece getActive_piece()
     {
@@ -62,6 +70,41 @@ public class Board implements Cloneable
         }
     }
 
+    public Piece addPiece(PieceColor color, PieceType type, Block block)
+    {
+        Piece tmp;
+        switch(type)
+        {
+            case QUEEN:
+            {
+                tmp = new Queen(color, type, nextPieceID);
+                break;
+            }
+            case BISHOP:
+            {
+                tmp = new Bishop(color, type, nextPieceID);
+                break;
+            }
+            case ROOK:
+            {
+                tmp = new Rook(color, type, nextPieceID);
+                break;
+            }
+            case KNIGHT:  // Fixed the missing case label
+            {
+                tmp = new Knight(color, type, nextPieceID);
+                break;
+            }
+            default:  // Handle the default case, which is a good practice
+            {
+                tmp = null;  // or throw an exception depending on your design
+                break;
+            }
+        }
+        this.pieces.add(tmp);
+        block.setPiece(tmp);
+        return tmp;
+    }
     public void removePiece(Piece piece)
     {
         for(Piece x: pieces)
@@ -79,7 +122,7 @@ public class Board implements Cloneable
         return this.pieces;
     }
 
-    public List<Block> getSquares()
+    public ArrayList<Block> getSquares()
     {
         return this.squares;
     }
@@ -227,5 +270,47 @@ public class Board implements Cloneable
         } catch (CloneNotSupportedException e) {
             throw new InternalError(e);
         }
+    }
+
+    public boolean inEnemyMoves(PieceColor color, int origin_row, int origin_col)
+    {
+        ArrayList<Piece> enemies = new ArrayList<>();
+        Piece piece = getPieceFromCoords(origin_row, origin_col);
+        if(color == PieceColor.WHITE)
+            enemies = getBlackPieces();
+        else
+            enemies = getWhitePieces();
+
+        for(Piece piece1: enemies)
+        {
+            for(Tuple<Integer, Integer> moves: piece1.getAttackingMoves())
+            {
+                if(moves.getFirst() == origin_row && moves.getSecond() == origin_col)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<Piece> getWhitePieces()
+    {
+        ArrayList<Piece> tmp = new ArrayList<>();
+        for(Piece piece: this.pieces)
+        {
+            if(piece.getColor() == PieceColor.WHITE)
+                tmp.add(piece);
+        }
+        return tmp;
+    }
+
+    private ArrayList<Piece> getBlackPieces()
+    {
+        ArrayList<Piece> tmp = new ArrayList<>();
+        for(Piece piece: this.pieces)
+        {
+            if(piece.getColor() == PieceColor.BLACK)
+                tmp.add(piece);
+        }
+        return tmp;
     }
 }

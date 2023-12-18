@@ -14,7 +14,6 @@ public class Mouse extends MouseAdapter
     public void mousePressed(MouseEvent e)
     {
         this.pressed = true;
-        System.out.println("SADGE");
     }
 
     @Override

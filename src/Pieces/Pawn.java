@@ -17,6 +17,9 @@ public class Pawn extends Piece
     public ArrayList<Tuple<Integer, Integer>> getAttackedBlocks(Board board)
     {
         Tuple<Integer, Integer> coords = this.getCoords(board);
-        return new PawnAttackMoveset().firstMoveCheck(coords.getFirst(), coords.getSecond(), board);
+        ArrayList<Tuple<Integer, Integer>> tmp = new ArrayList<>();
+        tmp.addAll(new PawnAttackMoveset().firstMoveCheck(coords.getFirst(), coords.getSecond(), board));
+        tmp.addAll(new EnPassantMoveset().firstMoveCheck(coords.getFirst(), coords.getSecond(), board));
+        return tmp;
     }
 }

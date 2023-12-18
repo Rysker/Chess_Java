@@ -11,5 +11,5 @@ public abstract class MoveChain
     {
         this.nextMoveChain = next;
     }
-    abstract public boolean performMove(Piece piece, Tuple<Integer, Integer> ending, Board board);
+    abstract public boolean performMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board);
 }
