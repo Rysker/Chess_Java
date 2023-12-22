@@ -49,11 +49,4 @@ public class PawnMoveset extends MoveStrategy
         Piece destination = board.getPieceFromCoords(row - distance, col);
         return (destination == null);
     }
-
-    private boolean checkIfEnemy(Board board, PieceColor color, int row, int col)
-    {
-        if(!checkValidRange(row, col))
-            return false;
-        return board.getPieceFromCoords(row, col).getColor() != color;
-    }
 }

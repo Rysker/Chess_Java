@@ -4,18 +4,14 @@ import Board.*;
 import DataTypes.*;
 import MoveChain.*;
 import Pieces.Piece;
-import Players.HumanPlayer;
-import Players.Player;
-import ViewManager.BoardViewer;
+import Players.*;
+import ScoreSheet.ScoreSheet;
 import ViewManager.UIManager;
 import Mouse.*;
 
 import javax.swing.*;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-
-import static java.lang.System.exit;
 
 public class GameManager
 {
@@ -24,6 +20,7 @@ public class GameManager
     private LogicManager logic;
     private Player activePlayer;
     private UIManager uiManager;
+    private ScoreSheet sheet;
     private Board board;
     private JFrame window;
     private int last_move_turn = -1;
@@ -31,15 +28,17 @@ public class GameManager
     {
         this.board = new Board();
         this.mouse = new Mouse();
+        this.sheet = new ScoreSheet();
         this.board.setPlayers(new HumanPlayer(PieceColor.WHITE, mouse), new HumanPlayer(PieceColor.BLACK, mouse));
         this.logic = LogicManager.getInstance();
-        this.uiManager = new UIManager(new BoardViewer(this.mouse, this.board));
+        this.uiManager = new UIManager(this.mouse, this.board);
         uiManager.addMouseMotionListener(this.mouse);
         uiManager.addMouseListener(this.mouse);
     }
 
     public static void main(String[] args)
     {
+
         JFrame window = new JFrame("Chess Game");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
@@ -71,6 +70,7 @@ public class GameManager
         turn ++;
         board.setTurn(turn);
         checkPromotion();
+        isChecked();
     }
 
     private void handleMoveFromPlayer()
@@ -78,7 +78,7 @@ public class GameManager
         window.repaint();
         uiManager.demandUpdate();
         //Human player
-        ArrayList<Tuple<Integer, Integer>> moves = this.activePlayer.getAction();
+        ArrayList<Tuple<Integer, Integer>> moves = this.activePlayer.getAction(board);
         if(moves.size() == 1)
         {
             Tuple<Integer, Integer> move = moves.get(0);
@@ -90,8 +90,10 @@ public class GameManager
             Tuple<Integer, Integer> moveFrom = moves.get(0);
             Tuple<Integer, Integer> moveTo = moves.get(1);
             Piece piece = board.getPieceFromCoords(moveFrom.getFirst(), moveFrom.getSecond());
-            if(new CastlingMove().performMove(turn, piece, moveTo, board))
+            Tuple<Boolean, String> move = new CastlingMove().performMove(turn, board.getActive_piece(), moveTo, board);
+            if(move.getFirst())
             {
+                this.sheet.addMove(board.getActive_piece().getCoords(board), moveTo, piece, move.getSecond());
                 this.last_move_turn++;
             }
         }
@@ -118,8 +120,11 @@ public class GameManager
 
             if(board.getActive_piece() != null)
             {
-                if(new CastlingMove().performMove(turn, board.getActive_piece(), new Tuple<>(row, col), board))
+                Tuple<Integer, Integer> origin = board.getActive_piece().getCoords(board);
+                Tuple<Boolean, String> move = new CastlingMove().performMove(turn, board.getActive_piece(), new Tuple<>(row, col), board);
+                if(move.getFirst())
                 {
+                    this.sheet.addMove(origin, new Tuple<>(row, col), board.getActive_piece(), move.getSecond());
                     this.last_move_turn++;
                 }
                 board.setActive_piece(null);
@@ -135,11 +140,26 @@ public class GameManager
         else
             this.activePlayer = board.getBlack_player();
     }
-
     public void setWindow(JFrame window)
     {
         this.window = window;
     }
+
+    private void isChecked()
+    {
+        if(this.turn % 2 == 0)
+        {
+            if(board.kingChecked(PieceColor.WHITE))
+                this.sheet.addChecked();
+
+        }
+        else
+        {
+            if(board.kingChecked(PieceColor.BLACK))
+                this.sheet.addChecked();
+        }
+    }
+
 
     private void checkPromotion()
     {
@@ -153,6 +173,7 @@ public class GameManager
                 choice = this.uiManager.getPromotionChoice(PieceColor.BLACK);
 
             this.logic.performPromotion(piece, choice, board);
+            this.sheet.addMove(null, null, piece, "Promotion");
         }
     }
 
@@ -164,21 +185,22 @@ public class GameManager
             if(answer == 1)
             {
                 System.out.println("Black player won!");
+                this.sheet.addWin(PieceColor.BLACK);
             }
 
             if(answer == 2)
             {
                 System.out.println("Draw");
+                this.sheet.addDraw();
             }
 
             if(answer == 3)
             {
                 System.out.println("White player won!");
+                this.sheet.addWin(PieceColor.WHITE);
             }
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Press any key to close the game");
-            scanner.nextLine();
-            exit(1);
+
+            this.uiManager.getEndingWindow(sheet);
         }
     }
 

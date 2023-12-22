@@ -8,12 +8,11 @@ import Mouse.*;
 
 import java.awt.*;
 
-import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
-import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseMotionListener;
-
 public class BoardViewer
 {
     private LegendViewer legend;
+    public final int square_size = 80;
+    public final int offset = 60;
     private PromotionMenu promotion;
     private Mouse mouse;
     private Board board;
@@ -38,7 +37,7 @@ public class BoardViewer
             g.setColor(square.getColor());
             if(board.getActive_piece() != null)
                 drawPossibleMoves(g, square);
-            g.fillRect(square.getCol() * board.square_size + board.offset, square.getRow() * board.square_size + board.offset, board.square_size, board.square_size);
+            g.fillRect(square.getCol() * square_size + offset, square.getRow() * square_size + offset, square_size, square_size);
         }
     }
 
@@ -59,6 +58,6 @@ public class BoardViewer
     private void drawPiece(Graphics2D g, Piece piece)
     {
         Tuple<Integer, Integer> coords = piece.getCoords(board);
-        g.drawImage(piece.getImage(), coords.getSecond() * board.square_size + board.offset, coords.getFirst() * board.square_size + board.offset, board.square_size, board.square_size, null, null);
+        g.drawImage(piece.getImage(), coords.getSecond() * square_size + offset, coords.getFirst() * square_size + offset, square_size, square_size, null, null);
     }
 }

@@ -4,19 +4,27 @@ import DataTypes.PieceColor;
 
 import javax.swing.*;
 import java.awt.*;
+import Board.*;
+import Mouse.*;
+import ScoreSheet.ScoreSheet;
 
-public class UIManager extends JPanel implements Runnable
+public class UIManager extends JPanel
 {
     public static final int WINDOW_WIDTH = 1300;
     public static final int WINDOW_HEIGHT = 750;
     BoardViewer boardmng;
+    OptionsViewer optionsmng;
+    GameEndingMenu endingmenu;
     PromotionMenu promotion;
-    public UIManager(BoardViewer boardmng)
+    public UIManager(Mouse mouse, Board board)
     {
         setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         setBackground(Color.black);
-        this.boardmng = boardmng;
+
+        this.boardmng = new BoardViewer(mouse, board);
         this.promotion = new PromotionMenu();
+        this.optionsmng = new OptionsViewer(board);
+        this.endingmenu = new GameEndingMenu();
     }
 
     public void paintComponent(Graphics g)
@@ -24,14 +32,8 @@ public class UIManager extends JPanel implements Runnable
         super.paintComponent(g);
         Graphics2D g1 = (Graphics2D)g;
         boardmng.draw(g1);
+        optionsmng.draw(g1);
     }
-
-    @Override
-    public void run()
-    {
-
-    }
-
     public void demandUpdate()
     {
         repaint();
@@ -42,4 +44,8 @@ public class UIManager extends JPanel implements Runnable
         return this.promotion.invokeMenuAndWait(color);
     }
 
+    public void getEndingWindow(ScoreSheet sheet)
+    {
+        this.endingmenu.invokeMenuAndWait(sheet);
+    }
 }

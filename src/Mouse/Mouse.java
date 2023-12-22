@@ -40,10 +40,4 @@ public class Mouse extends MouseAdapter
     {
         this.enable = true;
     }
-
-    public void disable()
-    {
-        this.enable = false;
-    }
-
 }

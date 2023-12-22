@@ -11,11 +11,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-public class PromotionMenu extends JFrame {
+public class PromotionMenu extends JFrame
+{
     private static final String[] PIECE_OPTIONS = {"QUEEN", "BISHOP", "KNIGHT", "ROOK"};
     private String userChoice;
 
-    public String invokeMenuAndWait(PieceColor color) {
+    public String invokeMenuAndWait(PieceColor color)
+    {
         setTitle("Chess Promotion Menu");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -27,7 +29,8 @@ public class PromotionMenu extends JFrame {
         ActionListener choiceListener = new ActionListener()
         {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 userChoice = ((JButton) e.getSource()).getToolTipText();
                 semaphore.release();
             }

@@ -9,6 +9,9 @@ import Pieces.Piece;
 import Pieces.Queen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class LogicManager
 {
@@ -54,7 +57,7 @@ public class LogicManager
 
     private void removeStillEliminatingMoves(int turn, Piece king, ArrayList<Piece> pieces, Board board)
     {
-        Board simulation_board = board.clone();
+        Board simulation_board;
         PieceColor color = king.getColor();
         ArrayList<Piece> pieces_same_color = new ArrayList<>();
 
@@ -208,4 +211,118 @@ public class LogicManager
         return size;
     }
 
+    public ArrayList<Tuple<Integer, Integer>> rankMovesBoard(Board board)
+    {
+        int last_turn = board.getLastTurnFromPieces();
+        ArrayList<Piece> pieces;
+        Piece king;
+        //White's moved last turn
+        if(last_turn % 2 == 0)
+        {
+            pieces = getEnemyPieces(PieceColor.WHITE, board);
+            king = getKingFromColor(PieceColor.BLACK, board);
+        }
+        else
+        {
+            pieces = getEnemyPieces(PieceColor.BLACK, board);
+            king = getKingFromColor(PieceColor.WHITE, board);
+        }
+        return simulateMoves(last_turn + 1, king, pieces, board);
+    }
+
+    private int evaluateMove(int turn, Board board, Piece piece2, Piece enemy_block_piece)
+    {
+        int score = 0;
+        ArrayList<Piece> allies;
+        ArrayList<Piece> enemies;
+        if(piece2.getColor() == PieceColor.WHITE)
+        {
+            allies = getEnemyPieces(PieceColor.BLACK, board);
+            enemies = getEnemyPieces(PieceColor.WHITE, board);
+        }
+        else
+        {
+            allies = getEnemyPieces(PieceColor.WHITE, board);
+            enemies = getEnemyPieces(PieceColor.BLACK, board);
+        }
+
+        for(Piece ally: allies)
+        {
+            for(Piece enemy: enemies)
+            {
+                for(Tuple<Integer, Integer> mov: enemy.getAttackingMoves())
+                {
+                    if(ally.getCoords(board).equals(mov) && ally.equals(piece2) && enemy_block_piece != null)
+                    {
+                        int loss = enemy_block_piece.getType().getValue() - ally.getType().getValue();
+                        if(loss < 0)
+                            score -= 1000;
+                    }
+                    else if (ally.getCoords(board).equals(mov))
+                        score -= ally.getType().getValue();
+                }
+            }
+        }
+
+        for(Piece enemy: enemies)
+        {
+            for(Piece ally: allies)
+            {
+                for(Tuple<Integer, Integer> mov: ally.getAttackingMoves())
+                {
+                    if (enemy.getCoords(board).equals(mov))
+                        score += ally.getType().getValue();
+                }
+            }
+        }
+
+        int conditions = checkConditions(turn, board);
+        if(conditions != 0 && conditions != 2)
+            score += 50000000;
+        return score;
+    }
+    private ArrayList<Tuple<Integer, Integer>> simulateMoves(int turn, Piece king, ArrayList<Piece> pieces, Board board)
+    {
+        ArrayList<Tuple<Integer, Integer>> evaluatedMoves = new ArrayList<>();
+        int biggest_evaluation = -10000;
+        Board simulation_board;
+        PieceColor color = king.getColor();
+        ArrayList<Piece> pieces_same_color = new ArrayList<>();
+
+        for (Piece piece : pieces)
+        {
+            if (piece.getColor().equals(color))
+                pieces_same_color.add(piece);
+        }
+
+        for (Piece piece : pieces_same_color)
+        {
+            ArrayList<Tuple<Integer, Integer>> moves = new ArrayList<>(piece.getPossibleMoves());
+            for (Tuple<Integer, Integer> move : moves)
+            {
+                simulation_board = board.clone();
+                Piece enemy_block_piece = board.getPieceFromCoords(move.getFirst(), move.getSecond());
+                if (enemy_block_piece != null)
+                {
+                    enemy_block_piece = enemy_block_piece.clone();
+                }
+                Piece piece2 = findSamePiece(piece, simulation_board);
+                this.move_chain.performMove(turn, piece2, move, simulation_board);
+                this.firstMovesUpdate(simulation_board);
+                removeStillEliminatingMoves(turn + 1, king, simulation_board.getAllPieces(), simulation_board);
+                king = getKingFromColor(color, simulation_board);
+                int evaluation = evaluateMove(turn, simulation_board, piece2, enemy_block_piece);
+
+                if (biggest_evaluation < evaluation)
+                {
+                    evaluatedMoves.clear();
+                    Tuple<Integer, Integer> origin = piece.getCoords(board);
+                    evaluatedMoves.add(origin);
+                    evaluatedMoves.add(move);
+                    biggest_evaluation = evaluation;
+                }
+            }
+        }
+        return evaluatedMoves;
+    }
 }

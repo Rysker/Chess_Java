@@ -2,6 +2,7 @@ package Players;
 
 import DataTypes.PieceColor;
 import DataTypes.Tuple;
+import Board.*;
 
 import java.util.ArrayList;
 import Mouse.*;
@@ -16,7 +17,7 @@ public class HumanPlayer extends Player
     }
 
     @Override
-    public ArrayList<Tuple<Integer, Integer>> getAction()
+    public ArrayList<Tuple<Integer, Integer>> getAction(Board board)
     {
         ArrayList<Tuple<Integer, Integer>> tmp = new ArrayList<>();
         mouse.enable();

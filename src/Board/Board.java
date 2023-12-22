@@ -13,8 +13,6 @@ public class Board implements Cloneable
 {
     final int x_limit = 7;
     final int y_limit = 7;
-    public final int square_size = 80;
-    public final int offset = 60;
     private ArrayList<Block> squares;
     private Player white_player;
     private Player black_player;
@@ -312,5 +310,46 @@ public class Board implements Cloneable
                 tmp.add(piece);
         }
         return tmp;
+    }
+
+    public int getLastTurnFromPieces()
+    {
+        int turn = 0;
+        for(Piece piece: pieces)
+        {
+            if(turn < piece.getLastMoveTurn())
+                turn = piece.getLastMoveTurn();
+        }
+        return turn;
+    }
+
+    public int getPlayerScore(PieceColor color)
+    {
+        int score = 0;
+        for(Piece piece: pieces)
+        {
+            if(piece.getColor() == color)
+                score += piece.getType().getValue();
+        }
+        return score - PieceType.KING.getValue();
+    }
+
+    public boolean kingChecked(PieceColor color)
+    {
+        Piece king;
+        if(color == PieceColor.WHITE)
+            king = getWhite_king();
+        else
+            king = getBlack_king();
+        for(Piece piece: pieces)
+        {
+            if(piece.getColor() != color)
+            {
+                for(Tuple<Integer, Integer> move: piece.getAttackingMoves())
+                if(king.inMoves(move.getFirst(), move.getSecond()))
+                    return true;
+            }
+        }
+        return false;
     }
 }

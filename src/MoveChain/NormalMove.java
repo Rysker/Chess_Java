@@ -4,6 +4,7 @@ import Board.*;
 import DataTypes.PieceType;
 import DataTypes.Tuple;
 import Pieces.Piece;
+import ScoreSheet.ScoreSheet;
 
 import static java.lang.Math.abs;
 
@@ -14,7 +15,7 @@ public class NormalMove extends MoveChain
         this.nextMoveChain = null;
     }
     @Override
-    public boolean performMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
+    public Tuple<Boolean, String> performMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
     {
         if(piece.inMoves(ending.getFirst(), ending.getSecond()))
         {
@@ -28,6 +29,8 @@ public class NormalMove extends MoveChain
                     return handlePieceDoubleMove(turn, piece, ending, board);
                 origin.removePiece();
                 destination.setPiece(piece);
+                piece.setLastMoveTurn(turn);
+                return new Tuple<>(Boolean.TRUE, "Normal");
             }
             //Enemy in destination
             else
@@ -37,14 +40,14 @@ public class NormalMove extends MoveChain
                 origin.removePiece();
                 board.removePiece(captured);
                 destination.setPiece(piece);
+                piece.setLastMoveTurn(turn);
+                return new Tuple<>(Boolean.TRUE, "Attacking");
             }
-            piece.setLastMoveTurn(turn);
-            return true;
         }
-        return false;
+        return new Tuple<>(Boolean.FALSE, "NoMove");
     }
 
-    private boolean handlePieceDoubleMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
+    private  Tuple<Boolean, String> handlePieceDoubleMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
     {
         Block destination = board.getBlockFromCoords(ending.getFirst(), ending.getSecond());
         Tuple<Integer, Integer> coords = piece.getCoords(board);
@@ -65,6 +68,6 @@ public class NormalMove extends MoveChain
             destination.setPiece(piece);
         }
         piece.setLastMoveTurn(turn);
-        return true;
+        return new Tuple<>(Boolean.TRUE, "Normal");
     }
 }

@@ -5,6 +5,7 @@ import DataTypes.PieceColor;
 import DataTypes.PieceType;
 import DataTypes.Tuple;
 import Pieces.Piece;
+import ScoreSheet.ScoreSheet;
 
 public class EnPassantMove extends MoveChain
 {
@@ -13,7 +14,7 @@ public class EnPassantMove extends MoveChain
         this.nextMoveChain = new NormalMove();
     }
     @Override
-    public boolean performMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
+    public Tuple<Boolean, String> performMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
     {
         Block destination = board.getBlockFromCoords(ending.getFirst(), ending.getSecond());
         Tuple<Integer, Integer> coords = piece.getCoords(board);
@@ -26,12 +27,12 @@ public class EnPassantMove extends MoveChain
                 if(enemy != null && enemy.getType() == PieceType.PAWN && enemy.getColor() != piece.getColor() && (enemy.getDouble_turn() + 1) == turn)
                 {
                     Block enemy_block = board.getBlockFromCoords(ending.getFirst() + 1, ending.getSecond());
-                    destination.setPiece(piece);
                     origin.removePiece();
                     enemy_block.removePiece();
                     board.removePiece(enemy);
+                    destination.setPiece(piece);
                     piece.setLastMoveTurn(turn);
-                    return true;
+                    return new Tuple<>(Boolean.TRUE, "EnPassant");
                 }
             }
             else
@@ -40,12 +41,12 @@ public class EnPassantMove extends MoveChain
                 if(enemy != null && enemy.getType() == PieceType.PAWN && enemy.getColor() != piece.getColor() && (enemy.getDouble_turn() + 1) == turn)
                 {
                     Block enemy_block = board.getBlockFromCoords(ending.getFirst() - 1, ending.getSecond());
-                    destination.setPiece(piece);
                     origin.removePiece();
                     enemy_block.removePiece();
                     board.removePiece(enemy);
+                    destination.setPiece(piece);
                     piece.setLastMoveTurn(turn);
-                    return true;
+                    return new Tuple<>(Boolean.TRUE, "EnPassant");
                 }
             }
         }

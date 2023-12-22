@@ -16,7 +16,7 @@ public class CastlingMove extends MoveChain
         this.setNext(new EnPassantMove());
     }
     @Override
-    public boolean performMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
+    public Tuple<Boolean, String> performMove(int turn, Piece piece, Tuple<Integer, Integer> ending, Board board)
     {
         if (piece.getType() == PieceType.KING && piece.inMoves(ending.getFirst(), ending.getSecond()) && abs(piece.getCoords(board).getSecond() - ending.getSecond()) == 2)
         {
@@ -31,9 +31,9 @@ public class CastlingMove extends MoveChain
 
                 squares.get(61).setPiece(squares.get(63).getPiece());
                 squares.get(63).setPiece(null);
-                squares.get(63).getPiece().setLastMoveTurn(turn);
+                squares.get(61).getPiece().setLastMoveTurn(turn);
 
-                return true;
+                return new Tuple<>(Boolean.TRUE, "Castling");
             }
 
             //Perform white long castling
@@ -47,7 +47,7 @@ public class CastlingMove extends MoveChain
                 squares.get(56).setPiece(null);
                 squares.get(59).getPiece().setLastMoveTurn(turn);
 
-                return true;
+                return new Tuple<>(Boolean.TRUE, "Castling");
             }
 
             //Perform black short castling
@@ -61,7 +61,7 @@ public class CastlingMove extends MoveChain
                 squares.get(7).setPiece(null);
                 squares.get(5).getPiece().setLastMoveTurn(turn);
 
-                return true;
+                return new Tuple<>(Boolean.TRUE, "Castling");
             }
 
             //Perform white long castling
@@ -75,7 +75,7 @@ public class CastlingMove extends MoveChain
                 squares.get(0).setPiece(null);
                 squares.get(3).getPiece().setLastMoveTurn(turn);
 
-                return true;
+                return new Tuple<>(Boolean.TRUE, "Castling");
             }
         }
         return this.nextMoveChain.performMove(turn, piece, ending, board);

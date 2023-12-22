@@ -25,7 +25,7 @@ public class CastlingMoveset extends MoveStrategy
             if (squares.get(61).getPiece() == null && squares.get(62).getPiece() == null &&
                     squares.get(63).getPiece() != null &&
                     squares.get(63).getPiece().getType() == PieceType.ROOK &&
-                    squares.get(63).getPiece().getLastMoveTurn() == -1 && board.inEnemyMoves(color, 7, 5)) {
+                    squares.get(63).getPiece().getLastMoveTurn() == -1 && !board.inEnemyMoves(color, 7, 5)) {
                 moves.add(new Tuple<>(7, 6));
             }
 

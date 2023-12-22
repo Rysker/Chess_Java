@@ -22,7 +22,8 @@ public class KingMoveset extends MoveStrategy
                                 Tuple.of(origin_row - 1, origin_col + 1),
                                 Tuple.of(origin_row - 1, origin_col),
                                 Tuple.of(origin_row - 1, origin_col - 1),
-                                Tuple.of(origin_row, origin_col - 1)
+                                Tuple.of(origin_row, origin_col - 1),
+                                Tuple.of(origin_row, origin_col + 1)
                         )
                 );
         tmp = super.returnValidMoves(tmp);
