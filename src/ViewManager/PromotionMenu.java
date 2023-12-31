@@ -11,50 +11,49 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-public class PromotionMenu extends JFrame
-{
+public class PromotionMenu extends JFrame {
     private static final String[] PIECE_OPTIONS = {"QUEEN", "BISHOP", "KNIGHT", "ROOK"};
     private String userChoice;
 
-    public String invokeMenuAndWait(PieceColor color)
-    {
-        setTitle("Chess Promotion Menu");
-        setSize(400, 200);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    public String invokeMenuAndWait(PieceColor color) {
+        Frame frame = new JFrame("Chess Promotion Menu");
+        frame.setSize(600, 150);
 
-        JPanel panel = new JPanel();
-        add(panel);
+        JPanel panel = new JPanel(new GridLayout(1, PIECE_OPTIONS.length));
+        frame.add(panel);
 
         Semaphore semaphore = new Semaphore(0);
         ActionListener choiceListener = new ActionListener()
         {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 userChoice = ((JButton) e.getSource()).getToolTipText();
                 semaphore.release();
             }
         };
 
-        for (int i = 0; i < PIECE_OPTIONS.length; i++)
+        Color color_tmp;
+        if (color == PieceColor.WHITE)
+            color_tmp = Color.WHITE;
+        else
+            color_tmp = Color.BLACK;
+
+        for (String pieceOption : PIECE_OPTIONS)
         {
-            JButton button = createPieceButton(PIECE_OPTIONS[i], Color.WHITE);
+            JButton button = createPieceButton(pieceOption, color_tmp);
             button.addActionListener(choiceListener);
             panel.add(button);
         }
 
-        setVisible(true);
+        frame.setVisible(true);
 
-        try
-        {
+        try {
             semaphore.acquire();
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        dispose();
+        frame.dispose();
         return userChoice;
     }
 
@@ -62,20 +61,28 @@ public class PromotionMenu extends JFrame
     {
         JButton button = new JButton(new ImageIcon(getPieceImage(pieceName, color)));
         button.setToolTipText(pieceName);
+        Dimension buttonSize = new Dimension(150, 150);
+        button.setPreferredSize(buttonSize);
         return button;
     }
 
     private Image getPieceImage(String pieceName, Color color)
     {
+        String color_tmp = (color == Color.WHITE) ? "white" : "black";
         BufferedImage image = null;
-        String path = "/assets/" + "white" + "_" + pieceName.toLowerCase() + ".png";
+        String path = "/Assets/Pieces/Default/" + color_tmp + "_" + pieceName.toLowerCase() + ".png";
         try
         {
             image = ImageIO.read(getClass().getResourceAsStream(path));
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
             System.exit(2);
         }
-        return image;
+
+        int width = 120;
+        int height = 120;
+        return image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
 }

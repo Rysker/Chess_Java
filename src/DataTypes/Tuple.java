@@ -2,7 +2,8 @@ package DataTypes;
 
 import java.util.Objects;
 
-public class Tuple<T1, T2> {
+public class Tuple<T1, T2>
+{
     private final T1 first;
     private final T2 second;
 
@@ -16,7 +17,8 @@ public class Tuple<T1, T2> {
         return new Tuple<>(a, b);
     }
 
-    public T1 getFirst() {
+    public T1 getFirst()
+    {
         return first;
     }
 
@@ -35,7 +37,8 @@ public class Tuple<T1, T2> {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(first, second);
     }
 }

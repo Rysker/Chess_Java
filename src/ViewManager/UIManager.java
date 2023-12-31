@@ -16,12 +16,12 @@ public class UIManager extends JPanel
     OptionsViewer optionsmng;
     GameEndingMenu endingmenu;
     PromotionMenu promotion;
-    public UIManager(Mouse mouse, Board board)
+    public UIManager(Board board)
     {
         setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         setBackground(Color.black);
 
-        this.boardmng = new BoardViewer(mouse, board);
+        this.boardmng = new BoardViewer(board);
         this.promotion = new PromotionMenu();
         this.optionsmng = new OptionsViewer(board);
         this.endingmenu = new GameEndingMenu();
@@ -44,8 +44,8 @@ public class UIManager extends JPanel
         return this.promotion.invokeMenuAndWait(color);
     }
 
-    public void getEndingWindow(ScoreSheet sheet)
+    public void getEndingWindow(ScoreSheet sheet, PieceColor color)
     {
-        this.endingmenu.invokeMenuAndWait(sheet);
+        this.endingmenu.invokeMenuAndWait(sheet, color);
     }
 }

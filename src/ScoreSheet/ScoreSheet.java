@@ -46,23 +46,21 @@ public class ScoreSheet {
         rows.put(7, "1");
     }
 
-    public ScoreSheet() {
+    public ScoreSheet()
+    {
         this.sheet = new ArrayList<>();
     }
 
     public void addMove(Tuple<Integer, Integer> origin, Tuple<Integer, Integer> ending, Piece piece, String option)
     {
-        if(option == "Normal")
-            addNormalMove(origin, ending, piece);
-        else if(option == "Attacking")
-            addAttackingMove(origin, ending, piece);
-        else if(option == "EnPassant")
-            addEnPassantMove(origin, ending, piece);
-        else if(option == "Castling")
-            addCastlingMove(origin, ending, piece);
-        else if(option == "Promotion")
-            addPromotion(origin, ending, piece);
-        System.out.println(this.displayPGN());
+        switch (option)
+        {
+            case "Normal" -> addNormalMove(origin, ending, piece);
+            case "Attacking" -> addAttackingMove(origin, ending, piece);
+            case "EnPassant" -> addEnPassantMove(origin, ending, piece);
+            case "Castling" -> addCastlingMove(origin, ending, piece);
+            case "Promotion" -> addPromotion(origin, ending, piece);
+        }
     }
 
     private void addNormalMove(Tuple<Integer, Integer> origin, Tuple<Integer, Integer> ending, Piece piece)
@@ -84,7 +82,7 @@ public class ScoreSheet {
     public void addEnPassantMove(Tuple<Integer, Integer> origin, Tuple<Integer, Integer> ending, Piece piece)
     {
         StringBuilder builder = new StringBuilder();
-        builder.append(columns.get(origin.getSecond()) + "x" + columns.get(ending.getSecond()) + rows.get(ending.getFirst()) + "e.p");
+        builder.append(columns.get(origin.getSecond()) + "x" + columns.get(ending.getSecond()) + rows.get(ending.getFirst()));
         this.sheet.add(builder.toString());
     }
     public void addCastlingMove(Tuple<Integer, Integer> origin, Tuple<Integer, Integer> ending, Piece piece)
@@ -102,8 +100,8 @@ public class ScoreSheet {
         StringBuilder builder = new StringBuilder();
         String tmp = this.sheet.get(this.sheet.size() - 1);
         builder.append(tmp);
-        builder.append(piece.getType());
-        this.sheet.remove(this.sheet.size());
+        builder.append(pieces.get(piece.getType()));
+        this.sheet.remove(this.sheet.size() - 1);
         this.sheet.add(builder.toString());
     }
 
@@ -113,13 +111,13 @@ public class ScoreSheet {
         String tmp = this.sheet.get(this.sheet.size() - 1);
         builder.append(tmp);
         builder.append("+");
-        this.sheet.remove(this.sheet.size());
+        this.sheet.remove(this.sheet.size() - 1);
         this.sheet.add(builder.toString());
     }
 
     private String displayPGN()
     {
-        StringBuilder pgn = new StringBuilder("");
+        StringBuilder pgn = new StringBuilder();
         int count_moves = 1;
         int count_lines = 1;
         for(String move : this.sheet)
@@ -169,8 +167,6 @@ public class ScoreSheet {
 
     public void addDraw()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append("1/2 - 1/2");
-        this.sheet.add(builder.toString());
+        this.sheet.add("1/2 - 1/2");
     }
 }

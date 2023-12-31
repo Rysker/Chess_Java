@@ -5,7 +5,7 @@ import DataTypes.PieceColor;
 import DataTypes.PieceType;
 import DataTypes.Tuple;
 import Pieces.Piece;
-import ScoreSheet.ScoreSheet;
+import SoundManager.SoundManager;
 
 public class EnPassantMove extends MoveChain
 {
@@ -32,6 +32,7 @@ public class EnPassantMove extends MoveChain
                     board.removePiece(enemy);
                     destination.setPiece(piece);
                     piece.setLastMoveTurn(turn);
+                    SoundManager.getInstance().playSound("Normal");
                     return new Tuple<>(Boolean.TRUE, "EnPassant");
                 }
             }
@@ -46,6 +47,7 @@ public class EnPassantMove extends MoveChain
                     board.removePiece(enemy);
                     destination.setPiece(piece);
                     piece.setLastMoveTurn(turn);
+                    SoundManager.getInstance().playSound("Normal");
                     return new Tuple<>(Boolean.TRUE, "EnPassant");
                 }
             }

@@ -7,8 +7,8 @@ import java.util.Objects;
 
 public class Block implements Cloneable
 {
-    private int row;
-    private int col;
+    private final int row;
+    private final int col;
     private Color color;
     private Piece piece;
 

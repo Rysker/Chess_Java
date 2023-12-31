@@ -6,6 +6,7 @@ import MoveChain.*;
 import Pieces.Piece;
 import Players.*;
 import ScoreSheet.ScoreSheet;
+import SoundManager.SoundManager;
 import ViewManager.UIManager;
 import Mouse.*;
 
@@ -31,7 +32,7 @@ public class GameManager
         this.sheet = new ScoreSheet();
         this.board.setPlayers(new HumanPlayer(PieceColor.WHITE, mouse), new HumanPlayer(PieceColor.BLACK, mouse));
         this.logic = LogicManager.getInstance();
-        this.uiManager = new UIManager(this.mouse, this.board);
+        this.uiManager = new UIManager(this.board);
         uiManager.addMouseMotionListener(this.mouse);
         uiManager.addMouseListener(this.mouse);
     }
@@ -60,17 +61,23 @@ public class GameManager
 
     private void gameTurn()
     {
+        window.repaint();
+        uiManager.demandUpdate();
+        SoundManager.getInstance().disable();
         logic.finalLogic(this.turn, this.board);
+        isChecked();
         handleConditions();
         changeActivePlayer();
         while(last_move_turn != turn)
         {
+            SoundManager.getInstance().enable();
             handleMoveFromPlayer();
+            SoundManager.getInstance().disable();
         }
         turn ++;
         board.setTurn(turn);
+        SoundManager.getInstance().enable();
         checkPromotion();
-        isChecked();
     }
 
     private void handleMoveFromPlayer()
@@ -151,7 +158,6 @@ public class GameManager
         {
             if(board.kingChecked(PieceColor.WHITE))
                 this.sheet.addChecked();
-
         }
         else
         {
@@ -172,7 +178,9 @@ public class GameManager
             else
                 choice = this.uiManager.getPromotionChoice(PieceColor.BLACK);
 
+            Tuple<Integer, Integer> coords = piece.getCoords(board);
             this.logic.performPromotion(piece, choice, board);
+            piece = board.getBlockFromCoords(coords.getFirst(), coords.getSecond()).getPiece();
             this.sheet.addMove(null, null, piece, "Promotion");
         }
     }
@@ -180,12 +188,14 @@ public class GameManager
     private void handleConditions()
     {
         int answer = logic.checkConditions(turn, board);
+        PieceColor winner = null;
         if(answer != 0)
         {
             if(answer == 1)
             {
                 System.out.println("Black player won!");
                 this.sheet.addWin(PieceColor.BLACK);
+                winner = PieceColor.BLACK;
             }
 
             if(answer == 2)
@@ -198,9 +208,10 @@ public class GameManager
             {
                 System.out.println("White player won!");
                 this.sheet.addWin(PieceColor.WHITE);
+                winner = PieceColor.WHITE;
             }
 
-            this.uiManager.getEndingWindow(sheet);
+            this.uiManager.getEndingWindow(sheet, winner);
         }
     }
 

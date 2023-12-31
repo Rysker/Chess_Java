@@ -5,6 +5,7 @@ import DataTypes.PieceType;
 import DataTypes.Tuple;
 import Pieces.*;
 import Players.Player;
+import SoundManager.SoundManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -88,18 +89,19 @@ public class Board implements Cloneable
                 tmp = new Rook(color, type, nextPieceID);
                 break;
             }
-            case KNIGHT:  // Fixed the missing case label
+            case KNIGHT:
             {
                 tmp = new Knight(color, type, nextPieceID);
                 break;
             }
-            default:  // Handle the default case, which is a good practice
+            default:
             {
-                tmp = null;  // or throw an exception depending on your design
+                tmp = null;
                 break;
             }
         }
         this.pieces.add(tmp);
+        nextPieceID++;
         block.setPiece(tmp);
         return tmp;
     }
@@ -272,8 +274,7 @@ public class Board implements Cloneable
 
     public boolean inEnemyMoves(PieceColor color, int origin_row, int origin_col)
     {
-        ArrayList<Piece> enemies = new ArrayList<>();
-        Piece piece = getPieceFromCoords(origin_row, origin_col);
+        ArrayList<Piece> enemies;
         if(color == PieceColor.WHITE)
             enemies = getBlackPieces();
         else
@@ -314,7 +315,7 @@ public class Board implements Cloneable
 
     public int getLastTurnFromPieces()
     {
-        int turn = 0;
+        int turn = - 1;
         for(Piece piece: pieces)
         {
             if(turn < piece.getLastMoveTurn())
@@ -341,13 +342,14 @@ public class Board implements Cloneable
             king = getWhite_king();
         else
             king = getBlack_king();
+
+        Tuple<Integer, Integer> coords = king.getCoords(this);
         for(Piece piece: pieces)
         {
-            if(piece.getColor() != color)
+            if(piece.getColor() != color && piece.inAttackingMoves(coords.getFirst(), coords.getSecond()))
             {
-                for(Tuple<Integer, Integer> move: piece.getAttackingMoves())
-                if(king.inMoves(move.getFirst(), move.getSecond()))
-                    return true;
+                SoundManager.getInstance().playSound("Checked");
+                return true;
             }
         }
         return false;

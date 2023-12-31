@@ -19,15 +19,6 @@ public abstract class Piece implements Cloneable
     private PieceColor color;
     private PieceType type;
     private int lastMoveTurn = -1;
-
-    public int getDouble_turn() {
-        return double_turn;
-    }
-
-    public void setDouble_turn(int double_turn) {
-        this.double_turn = double_turn;
-    }
-
     private int double_turn = -1;
     private ArrayList<Tuple<Integer, Integer>> moves;
     private ArrayList<Tuple<Integer, Integer>> attackingMoves;
@@ -43,12 +34,18 @@ public abstract class Piece implements Cloneable
         this.image = prepareImage();
     }
 
-    public void addMoveStrategy(MoveStrategy strategy) {
-        availableStrategies.add(strategy);
+    public int getDouble_turn()
+    {
+        return double_turn;
     }
 
-    public void removeMoveStrategies() {
-        availableStrategies.clear();
+    public void setDouble_turn(int double_turn)
+    {
+        this.double_turn = double_turn;
+    }
+    public void addMoveStrategy(MoveStrategy strategy)
+    {
+        availableStrategies.add(strategy);
     }
 
     public void getPossibleMoves(Board board)
@@ -71,16 +68,14 @@ public abstract class Piece implements Cloneable
         this.attackingMoves.removeIf(x -> x.equals(move));
     }
 
-    public void setColor(PieceColor color) {
+    public void setColor(PieceColor color)
+    {
         this.color = color;
     }
 
-    public PieceType getType() {
+    public PieceType getType()
+    {
         return type;
-    }
-
-    public void setType(PieceType type) {
-        this.type = type;
     }
 
     public void getAttackingMoves(Board board)
@@ -108,25 +103,26 @@ public abstract class Piece implements Cloneable
         this.moves.addAll(set2);
     }
 
-    public PieceColor getColor() {
+    public PieceColor getColor()
+    {
         return color;
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
-    }
-
-    public BufferedImage getImage() {
+    public BufferedImage getImage()
+    {
         return image;
     }
 
     private BufferedImage prepareImage()
     {
         BufferedImage image = null;
-        String path = "/assets/" + getColor().toString().toLowerCase() + "_" + getType().toString().toLowerCase() + ".png";
-        try {
+        String path = "/Assets/Pieces/Default/" + getColor().toString().toLowerCase() + "_" + getType().toString().toLowerCase() + ".png";
+        try
+        {
             image = ImageIO.read(getClass().getResourceAsStream(path));
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             System.exit(2);
         }
         return image;
@@ -144,10 +140,21 @@ public abstract class Piece implements Cloneable
         return false;
     }
 
+    public boolean inAttackingMoves(int row, int col)
+    {
+        if (this.moves == null)
+            return false;
+        for (Tuple<Integer, Integer> coords : this.attackingMoves)
+        {
+            if (coords.getFirst() == row && coords.getSecond() == col)
+                return true;
+        }
+        return false;
+    }
+
     public Tuple<Integer, Integer> getCoords(Board board)
     {
-        Tuple<Integer, Integer> coords = board.getTupleFromPiece(this);
-        return coords;
+        return board.getTupleFromPiece(this);
     }
 
     public ArrayList<Tuple<Integer, Integer>> getAttackingMoves()
@@ -160,11 +167,6 @@ public abstract class Piece implements Cloneable
         return moves;
     }
 
-    public void setMoves(ArrayList<Tuple<Integer, Integer>> moves)
-    {
-        this.moves = moves;
-    }
-
     public int getLastMoveTurn()
     {
         return lastMoveTurn;
@@ -173,11 +175,6 @@ public abstract class Piece implements Cloneable
     public void setLastMoveTurn(int lastMoveTurn)
     {
         this.lastMoveTurn = lastMoveTurn;
-    }
-
-    public void setId(int id)
-    {
-        this.id = id;
     }
 
     public int getId()

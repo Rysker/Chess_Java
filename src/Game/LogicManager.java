@@ -6,12 +6,8 @@ import DataTypes.PieceType;
 import DataTypes.Tuple;
 import MoveChain.*;
 import Pieces.Piece;
-import Pieces.Queen;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class LogicManager
 {
@@ -167,7 +163,7 @@ public class LogicManager
                 board.addPiece(color, PieceType.KNIGHT, block);
                 break;
             default:
-                System.out.println("ERROR!!!");;
+                System.out.println("ERROR!!!");
                 break;
         }
     }
@@ -176,7 +172,7 @@ public class LogicManager
     {
         Tuple<Integer, Integer> white_king = board.getWhite_king().getCoords(board);
         Tuple<Integer, Integer> black_king = board.getBlack_king().getCoords(board);
-        ArrayList<Piece> pieces = new ArrayList<>();
+        ArrayList<Piece> pieces;
         //Black's moved last turn
         if(turn % 2 == 0)
         {

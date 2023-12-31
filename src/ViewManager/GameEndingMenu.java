@@ -1,5 +1,6 @@
 package ViewManager;
 
+import DataTypes.PieceColor;
 import ScoreSheet.ScoreSheet;
 
 import javax.swing.*;
@@ -10,8 +11,19 @@ import static java.lang.System.exit;
 
 public class GameEndingMenu extends JFrame
 {
-    public void invokeMenuAndWait(ScoreSheet sheet)
+    public void invokeMenuAndWait(ScoreSheet sheet, PieceColor color)
     {
+        String message;
+        if (color != null)
+        {
+            message = color + " player" + " won the game!";
+        }
+        else
+        {
+            message = "There is a draw!";
+        }
+        JOptionPane.showMessageDialog(null, message, "Game Result", JOptionPane.INFORMATION_MESSAGE);
+
         int option = JOptionPane.showConfirmDialog(
                 this,
                 "Do you want to save the game?",

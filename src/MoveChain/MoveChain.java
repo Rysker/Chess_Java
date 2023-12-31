@@ -3,7 +3,7 @@ package MoveChain;
 import Board.Board;
 import DataTypes.Tuple;
 import Pieces.Piece;
-
+import SoundManager.SoundManager;
 
 public abstract class MoveChain
 {

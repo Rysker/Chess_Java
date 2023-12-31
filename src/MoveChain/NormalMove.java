@@ -4,7 +4,7 @@ import Board.*;
 import DataTypes.PieceType;
 import DataTypes.Tuple;
 import Pieces.Piece;
-import ScoreSheet.ScoreSheet;
+import SoundManager.SoundManager;
 
 import static java.lang.Math.abs;
 
@@ -22,6 +22,7 @@ public class NormalMove extends MoveChain
             Block destination = board.getBlockFromCoords(ending.getFirst(), ending.getSecond());
             Tuple<Integer, Integer> coords = piece.getCoords(board);
             Block origin = board.getBlockFromCoords(coords.getFirst(), coords.getSecond());
+
             //Normal move, no enemy
             if(destination.getPiece() == null)
             {
@@ -30,6 +31,7 @@ public class NormalMove extends MoveChain
                 origin.removePiece();
                 destination.setPiece(piece);
                 piece.setLastMoveTurn(turn);
+                SoundManager.getInstance().playSound("Normal");
                 return new Tuple<>(Boolean.TRUE, "Normal");
             }
             //Enemy in destination
@@ -41,6 +43,7 @@ public class NormalMove extends MoveChain
                 board.removePiece(captured);
                 destination.setPiece(piece);
                 piece.setLastMoveTurn(turn);
+                SoundManager.getInstance().playSound("Normal");
                 return new Tuple<>(Boolean.TRUE, "Attacking");
             }
         }
@@ -68,6 +71,7 @@ public class NormalMove extends MoveChain
             destination.setPiece(piece);
         }
         piece.setLastMoveTurn(turn);
+        SoundManager.getInstance().playSound("Normal");
         return new Tuple<>(Boolean.TRUE, "Normal");
     }
 }
