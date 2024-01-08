@@ -5,7 +5,6 @@ import DataTypes.PieceColor;
 import javax.swing.*;
 import java.awt.*;
 import Board.*;
-import Mouse.*;
 import ScoreSheet.ScoreSheet;
 
 public class UIManager extends JPanel

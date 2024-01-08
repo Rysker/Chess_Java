@@ -5,8 +5,6 @@ import DataTypes.PieceType;
 import DataTypes.Tuple;
 import Pieces.Piece;
 import SoundManager.SoundManager;
-
-
 import java.util.ArrayList;
 
 import static java.lang.Math.abs;

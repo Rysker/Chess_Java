@@ -6,6 +6,7 @@ import DataTypes.PieceType;
 import DataTypes.Tuple;
 import MoveChain.*;
 import Pieces.Piece;
+import Players.Player;
 
 import java.util.ArrayList;
 
@@ -173,6 +174,9 @@ public class LogicManager
         Tuple<Integer, Integer> white_king = board.getWhite_king().getCoords(board);
         Tuple<Integer, Integer> black_king = board.getBlack_king().getCoords(board);
         ArrayList<Piece> pieces;
+
+        if(checkInsufficientMaterial(board))
+            return 2;
         //Black's moved last turn
         if(turn % 2 == 0)
         {
@@ -195,6 +199,87 @@ public class LogicManager
             else
                 return 0;
         }
+    }
+
+    private boolean checkInsufficientMaterial(Board board)
+    {
+        ArrayList<Piece> pieces = board.getAllPieces();
+        ArrayList<Piece> whites = new ArrayList<>();
+        ArrayList<Piece> blacks = new ArrayList<>();
+        for(Piece piece: pieces)
+        {
+            if(piece.getColor() == PieceColor.WHITE)
+                whites.add(piece);
+            else
+                blacks.add(piece);
+        }
+
+        int whiteCount = whites.size();
+        int blackCount = blacks.size();
+
+        // King vs King scenario
+        if (whiteCount == 1 && blackCount == 1)
+        {
+            return true;
+        }
+        else if (whiteCount == 1 && blackCount == 2)
+        {
+            if (containsBishopOrKnight(blacks))
+            {
+                return true;
+            }
+        }
+        else if (whiteCount == 2 && blackCount == 1)
+        {
+            if (containsBishopOrKnight(whites))
+            {
+                return true;
+            }
+        }
+        else if (whiteCount == 2 && blackCount == 2)
+        {
+            int whiteIndex = getBishopIndex(whites);
+            int blackIndex = getBishopIndex(blacks);
+
+            if (whiteIndex != -1 && blackIndex != -1)
+            {
+                Tuple<Integer, Integer> whiteCoords = whites.get(whiteIndex).getCoords(board);
+                Tuple<Integer, Integer> blackCoords = blacks.get(whiteIndex).getCoords(board);
+                int x = (whiteCoords.getFirst() + whiteCoords.getSecond()) % 2;
+                int y = (blackCoords.getFirst() + blackCoords.getSecond()) % 2;
+
+                if (x == y)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean containsBishopOrKnight(ArrayList<Piece> pieces)
+    {
+        for (Piece piece : pieces)
+        {
+            if (piece.getType() == PieceType.BISHOP || piece.getType() == PieceType.KNIGHT)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int getBishopIndex(ArrayList<Piece> pieces)
+    {
+        for (int i = 0; i < pieces.size(); i++)
+        {
+            if (pieces.get(i).getType() == PieceType.BISHOP)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private int countMoves(ArrayList<Piece> pieces)

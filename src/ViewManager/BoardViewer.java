@@ -5,7 +5,6 @@ import Board.Board;
 import DataTypes.PieceColor;
 import DataTypes.Tuple;
 import Pieces.*;
-import Mouse.*;
 
 import java.awt.*;
 
